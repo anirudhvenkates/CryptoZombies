@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
   <meta charset="UTF-8">
   <title>CryptoZombies front-end</title>
@@ -30,22 +29,10 @@
 
     function startApp() {
 	
-      //ZombieOwnership contratc address
-      var cryptoZombiesAddress = "0xC08d276D3022F1E9E1e99eBAa6410fE4FcbEcB8f";
+      // ZombieOwnership contract address. Must be updated to match Ganache
+      var cryptoZombiesAddress = "0x1AAB936D33b7C29E1E90F25CAFA8bDE18c110271";
 
       cryptoZombies = new web3.eth.Contract(cryptoZombiesABI, cryptoZombiesAddress);
-
-
- //the following code from Lesson 6, chapter 5 is obsolete
- //     var accountInterval = setInterval(function () {
-
-  //      if (web3.eth.accounts[0] !== userAccount) {
-          //userAccount = web3.eth.accounts[0];
-
-     //     getZombiesByOwner(userAccount)
-      //      .then(displayZombies);
-      //  }
-     // }, 100);
 
       cryptoZombies.events.Transfer({ filter: { _to: userAccount } })
         .on("data", function (event) {
@@ -57,11 +44,8 @@
     function displayZombies(ids) {
       $("#zombies").empty();
       for (id of ids) {
-
         getZombieDetails(id)
           .then(function (zombie) {
-
-
             $("#zombies").append(`<div class="zombie">
               <ul>
                 <li>Name: ${zombie.name}</li>
@@ -74,11 +58,16 @@
             </div>`);
           });
       }
-
     }
 
-    function createRandomZombie(name) {
+    async function createRandomZombie(name) {
 
+      // if the user already has a zombie
+      const ids = await getZombiesByOwner(userAccount);
+      if (ids.length > 0) {
+          $("#txStatus").text("You already have a zombie!");
+          return;
+      }
 
       $("#txStatus").text("Creating new zombie on the blockchain. This may take a while...");
 
@@ -90,7 +79,6 @@
           getZombiesByOwner(userAccount).then(displayZombies);
         })
         .on("error", function (error) {
-
           $("#txStatus").text(error);
         });
     }
@@ -159,21 +147,6 @@
     }
    });
  
-   //the following code from Lesson 6, chapter 2 is obsolete
-   //metamask no longer inject web3 since early 2021
-   //window.addEventListener('load', function () {
-
-  //    if (typeof web3 !== 'undefined') {
-   //     web3js = new Web3(web3.currentProvider);
-   //   } else {
-
-    //  }
-
-
-    //  startApp()
-
-  //  }) 
-
    ethereum.on('accountsChanged', (accounts) => {
        window.location.reload();
    });
@@ -182,27 +155,20 @@
        window.location.reload(); 
    });  
 
- 
     createzombieButton.addEventListener('click', () => {
       createRandomZombie(userAccount);
-
     });
 
     showZombieButton.addEventListener('click', () => {
       getZombiesByOwner(userAccount)
             .then(displayZombies);
-
     });
 
     levelupButton.addEventListener('click', () => {
       getZombiesByOwner(userAccount)
             .then(levelUp);
-
     });
-
-
 
   </script>
 </body>
-
 </html>
