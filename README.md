@@ -8,9 +8,9 @@ Repository for creating Mid Term Project
 
 **Anirudh Venkatesh**
 
-- Email:
+- Email: anirudh.venkatesh@csu.fullerton.edu
 
-- CWID:
+- CWID: 885174318
 
 **Evan Heidebrink**
 
