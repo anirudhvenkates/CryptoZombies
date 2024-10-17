@@ -16,8 +16,11 @@
   <div id="zombies"></div>
 
   <button class="showZombieButton">Show Zombies</button>
-  <button class="createzombieButton">Create Zombie</button>
   <button class="levelupButton">Level Up</button>
+
+  <!-- Initially hidden elements -->
+  <button class="createzombieButton" id="createZombieButton" style="display: none;">Create Zombie</button>
+  <input type="text" id="zombieNameInput" placeholder="Enter zombie name" style="display: none;">
 
   <script>
 
@@ -102,6 +105,7 @@
         .send({ from: userAccount, value: web3.utils.toWei("0.001", "ether") })
         .on("receipt", function (receipt) {
           $("#txStatus").text("Power overwhelming! Zombie successfully leveled up");
+          showZombieButton.click();
         })
         .on("error", function (error) {
           $("#txStatus").text(error);
@@ -145,6 +149,12 @@
     else {
         console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
+
+    const ids = await getZombiesByOwner(userAccount);
+      if (ids.length <= 0) {
+        document.getElementById('createZombieButton').style.display = 'block';
+        document.getElementById('zombieNameInput').style.display = 'block';
+      }
    });
  
    ethereum.on('accountsChanged', (accounts) => {
@@ -156,7 +166,15 @@
    });  
 
     createzombieButton.addEventListener('click', () => {
-      createRandomZombie(userAccount);
+      const zombieName = document.getElementById('zombieNameInput').value;
+
+      // check if a name was entered
+      if (zombieName.trim() === "") {
+          alert("Please enter a zombie name.");
+          return;
+      }
+
+      createRandomZombie(zombieName);
     });
 
     showZombieButton.addEventListener('click', () => {
