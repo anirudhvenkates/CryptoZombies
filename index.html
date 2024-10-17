@@ -10,6 +10,8 @@
     src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
   <script language="javascript" type="text/javascript" src="cryptozombies_abi.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/ipfs-http-client/dist/index.min.js"></script>
 </head>
 
 <body>
@@ -19,6 +21,10 @@
   <button class="showZombieButton">Show Zombies</button>
   <button class="createzombieButton">Create Zombie</button>
   <button class="levelupButton">Level Up</button>
+  
+  <h1>Upload File to IPFS</h1>
+  <input type="file" id="fileInput" />
+  <button id="uploadButton">Upload</button>
 
   <script>
 
@@ -27,11 +33,14 @@
     const showZombieButton = document.querySelector('.showZombieButton');
     const createzombieButton = document.querySelector('.createzombieButton');
     const levelupButton = document.querySelector('.levelupButton');
+	
+	// Set up IPFS client
+    const ipfs = window.IpfsHttpClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
     function startApp() {
 	
       //ZombieOwnership contratc address
-      var cryptoZombiesAddress = "0xC08d276D3022F1E9E1e99eBAa6410fE4FcbEcB8f";
+      var cryptoZombiesAddress = "0x2f35171a4d6Bf77bF9f1fA9a374e8aB2e4Df8FC6";
 
       cryptoZombies = new web3.eth.Contract(cryptoZombiesABI, cryptoZombiesAddress);
 
@@ -76,6 +85,18 @@
       }
 
     }
+	
+	// Function to upload file to IPFS and then to the contract
+        async function uploadFileToIPFS(file, description) {
+			$("#txStatus").text("Uploading file to IPFS Database. This may take a while...");
+            const added = await ipfs.add(file);
+            const ipfsHash = added.path; // Get the IPFS hash
+
+            // Now store the hash in the contract
+            const tx = await contract.uploadFile(ipfsHash, description);
+            await tx.wait(); // Wait for the transaction to be mined
+            console.log(`File uploaded with IPFS hash: ${ipfsHash}`);
+        }
 
     function createRandomZombie(name) {
 
@@ -199,6 +220,22 @@
             .then(levelUp);
 
     });
+	
+	// Event listener for upload button
+        document.getElementById('uploadButton').addEventListener('click', async () => {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const description = "Your description here"; // Add your description
+                try {
+                    await uploadFileToIPFS(file, description);
+                } catch (error) {
+                    console.error("Error uploading file:", error);
+                }
+            } else {
+                alert("Please select a file to upload.");
+            }
+        });
 
 
 
