@@ -16,6 +16,9 @@ function startApp() {
       let data = event.returnValues;
       getZombiesByOwner(userAccount).then(displayZombies);
     }).on("error", console.error);
+
+    const accountHeader = document.getElementById('accountHeader');
+    accountHeader.textContent = `Account: ${userAccount}`;
 }
 
 function displayZombies(ids) {
