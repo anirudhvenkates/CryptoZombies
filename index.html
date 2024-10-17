@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
   <meta charset="UTF-8">
   <title>CryptoZombies front-end</title>
-<link rel="icon" href="favicon.ico">
+  <link rel="icon" href="favicon.ico">
   <script language="javascript" type="text/javascript"
     src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
   <script language="javascript" type="text/javascript" src="cryptozombies_abi.js"></script>
+  <script src="node_modules/ipfs-http-client/dist/index.min.js"></script> 
+  <!-- script language="javascript" type="text/javascript" src="ipfs-http-client.js"></script --> <!-- Include IPFS client -->
 </head>
 
 <body>
@@ -20,48 +21,35 @@
   <button class="createzombieButton">Create Zombie</button>
   <button class="levelupButton">Level Up</button>
 
-  <script>
+  <input type="file" id="fileInput" />
+  <button id="uploadToIPFSButton">Upload to IPFS</button>
 
+  <script>
     var cryptoZombies;
     var userAccount;
     const showZombieButton = document.querySelector('.showZombieButton');
     const createzombieButton = document.querySelector('.createzombieButton');
     const levelupButton = document.querySelector('.levelupButton');
+    const uploadToIPFSButton = document.getElementById('uploadToIPFSButton');
+    const fileInput = document.getElementById('fileInput');
+
+    const ipfs = create({ url: 'http://localhost:5001' }); // Create IPFS client
 
     function startApp() {
-	
-      //ZombieOwnership contratc address
-      var cryptoZombiesAddress = "0xC08d276D3022F1E9E1e99eBAa6410fE4FcbEcB8f";
-
+      var cryptoZombiesAddress = "0x7a9A640770E5375abe1aBB9f8c3A966873307F11";
       cryptoZombies = new web3.eth.Contract(cryptoZombiesABI, cryptoZombiesAddress);
-
-
- //the following code from Lesson 6, chapter 5 is obsolete
- //     var accountInterval = setInterval(function () {
-
-  //      if (web3.eth.accounts[0] !== userAccount) {
-          //userAccount = web3.eth.accounts[0];
-
-     //     getZombiesByOwner(userAccount)
-      //      .then(displayZombies);
-      //  }
-     // }, 100);
 
       cryptoZombies.events.Transfer({ filter: { _to: userAccount } })
         .on("data", function (event) {
-          let data = event.returnValues;
           getZombiesByOwner(userAccount).then(displayZombies);
         }).on("error", console.error);
     }
 
     function displayZombies(ids) {
       $("#zombies").empty();
-      for (id of ids) {
-
+      for (const id of ids) {
         getZombieDetails(id)
           .then(function (zombie) {
-
-
             $("#zombies").append(`<div class="zombie">
               <ul>
                 <li>Name: ${zombie.name}</li>
@@ -74,23 +62,47 @@
             </div>`);
           });
       }
-
     }
 
+    async function uploadFileToIPFS() {
+      const file = fileInput.files[0]; // Get the selected file
+      if (!file) {
+        $("#txStatus").text("Please select a file to upload.");
+        return;
+      }
+
+      $("#txStatus").text("Uploading file to IPFS...");
+
+      try {
+        const result = await ipfs.add(file); // Upload the file to IPFS
+        console.log('IPFS Hash:', result.path);
+
+        // Connect to your IPFSStorage contract
+        const ipfsStorageAddress = '0xa8c096af607E04e4A4358E6DF59332a5bBeb200d'; // Replace with your contract address
+        const ipfsStorage = new web3.eth.Contract(IPFSStorageABI, ipfsStorageAddress);
+
+        // Set the IPFS hash in the contract
+        const tx = await ipfsStorage.methods.setIPFSHash(result.path).send({ from: userAccount });
+        await tx.wait();
+        $("#txStatus").text("File uploaded to IPFS and hash set in contract: " + result.path);
+      } catch (error) {
+        $("#txStatus").text("Error uploading file to IPFS: " + error.message);
+		console.error("Error uploading file:", error); 
+      }
+    }
+
+    // Event listener for the upload button
+    uploadToIPFSButton.addEventListener('click', uploadFileToIPFS);
+
     function createRandomZombie(name) {
-
-
       $("#txStatus").text("Creating new zombie on the blockchain. This may take a while...");
-
       return cryptoZombies.methods.createRandomZombie(name)
         .send({ from: userAccount })
         .on("receipt", function (receipt) {
           $("#txStatus").text("Successfully created " + name + "!");
-
           getZombiesByOwner(userAccount).then(displayZombies);
         })
         .on("error", function (error) {
-
           $("#txStatus").text(error);
         });
     }
@@ -121,87 +133,57 @@
     }
 
     function getZombieDetails(id) {
-      return cryptoZombies.methods.zombies(id).call()
+      return cryptoZombies.methods.zombies(id).call();
     }
 
     function zombieToOwner(id) {
-      return cryptoZombies.methods.zombieToOwner(id).call()
+      return cryptoZombies.methods.zombieToOwner(id).call();
     }
 
     function getZombiesByOwner(owner) {
-      return cryptoZombies.methods.getZombiesByOwner(owner).call()
+      return cryptoZombies.methods.getZombiesByOwner(owner).call();
     }
 
     window.addEventListener('load', async () => {
-    // Modern dapp browsers...
-    if (window.ethereum) {
+      if (window.ethereum) {
         window.web3 = new Web3(ethereum);
         try {
-            // Request account access if needed
-            const accounts = await ethereum.enable();
-            // Acccounts now exposed
-            userAccount = accounts[0];
-            startApp()
+          const accounts = await ethereum.enable();
+          userAccount = accounts[0];
+          startApp();
         } catch (error) {
-            // User denied account access...
+          console.error("User denied account access...");
         }
-    }
-    // Legacy dapp browsers...
-    else if (window.web3) {
+      } else if (window.web3) {
         window.web3 = new Web3(web3.currentProvider);
-        // Acccounts always exposed
         userAccount = web3.eth.accounts[0];
-        startApp()
-    }
-    // Non-dapp browsers...
-    else {
+        startApp();
+      } else {
         console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
-    }
-   });
- 
-   //the following code from Lesson 6, chapter 2 is obsolete
-   //metamask no longer inject web3 since early 2021
-   //window.addEventListener('load', function () {
+      }
+    });
 
-  //    if (typeof web3 !== 'undefined') {
-   //     web3js = new Web3(web3.currentProvider);
-   //   } else {
+    ethereum.on('accountsChanged', (accounts) => {
+      window.location.reload();
+    });
 
-    //  }
+    ethereum.on('chainChanged', (chainId) => {
+      window.location.reload();
+    });
 
-
-    //  startApp()
-
-  //  }) 
-
-   ethereum.on('accountsChanged', (accounts) => {
-       window.location.reload();
-   });
-
-   ethereum.on('chainChanged', (chainId) => {
-       window.location.reload(); 
-   });  
-
- 
     createzombieButton.addEventListener('click', () => {
       createRandomZombie(userAccount);
-
     });
 
     showZombieButton.addEventListener('click', () => {
       getZombiesByOwner(userAccount)
             .then(displayZombies);
-
     });
 
     levelupButton.addEventListener('click', () => {
       getZombiesByOwner(userAccount)
             .then(levelUp);
-
     });
-
-
-
   </script>
 </body>
 
