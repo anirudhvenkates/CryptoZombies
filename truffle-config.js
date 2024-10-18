@@ -20,9 +20,23 @@
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 
-//
+//Read mnemonic file
 const fs = require('fs');
 const mnemonic = fs.readFileSync("mnemonic.txt").toString().trim();
+
+//Read config file
+const config = JSON.parse(fs.readFileSync("config.json").toString().trim());
+/*
+const dev_environment = process.env.ENV || 'development';
+const devConfig = config[dev_environment];
+
+const sep_environment = process.env.ENV || 'sepolia';
+const sepConfig = config[sep_environment];
+
+const sol_environment = process.env.ENV || 'solidity';
+const solConfig = config[sol_environment];
+*/
+console.log("Loaded config:", config);
 
 module.exports = {
   /**
@@ -43,9 +57,9 @@ module.exports = {
     // options below to some value.
     //
      development: {
-      host: "127.0.0.1",     // Localhost (default: none)
-     port: 7545,            // Standard Ethereum port (default: none)
-     network_id: "5777",       // Any network (default: none)
+     host: config.development.ganache_host,     // Localhost (default: none)
+     port: config.development.port,            // Standard Ethereum port (default: none)
+     network_id: config.development.network_id,       // Any network (default: none)
      },
     // Another network with more advanced options...
     // advanced: {
@@ -75,14 +89,14 @@ module.exports = {
   
   // Configuration for the Sepolia test network
   sepolia: {
-	provider: () => new HDWalletProvider(mnemonic, `https://sepolia.infura.io/v3/ad90e0f9dbec4a92a6ba74831d62525e`,{ timeout: 40000 }),
-    network_id: 11155111,  // Sepolia's network id
-    gas: 5000000,          // Adjust based on your contract's needs
-    gasPrice: 1000000000,  // Set to around 1 gwei (in wei) for Sepolia
-    confirmations: 2,      // Number of confirmations to wait between deployments (default: 0)
-    timeoutBlocks: 200,    // Number of blocks before a deployment times out (default: 50)
-    skipDryRun: true,       // Skip dry run before migrations (default: false for public nets)
-	from: "0x647A17644F560e71e9A1BbC317ba3ba736C3369F" // If you have multiple accounts, name the Account
+	provider: () => new HDWalletProvider(mnemonic, config.sepolia.provider ,{ timeout: config.sepolia.timeout }),
+    network_id: config.sepolia.network_id,  // Sepolia's network id
+    gas: config.sepolia.gas,          // Adjust based on your contract's needs
+    gasPrice: config.sepolia.gasPrice,  // Set to around 1 gwei (in wei) for Sepolia
+    confirmations: config.sepolia.confirmations,      // Number of confirmations to wait between deployments (default: 0)
+    timeoutBlocks: config.sepolia.timeoutBlocks,    // Number of blocks before a deployment times out (default: 50)
+    skipDryRun: config.sepolia.skipDryRun,       // Skip dry run before migrations (default: false for public nets)
+	from: config.sepolia.fromAccount // If you have multiple accounts, name the Account
     },
 
   // Set default mocha options here, use special reporters etc.
@@ -94,8 +108,8 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.27",
-      settings: { evmVersion: 'london' }    // Fetch exact version from solc-bin (default: truffle's version)
+      version: config.solidity.version,
+      settings: { evmVersion: config.solidity.location }    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
       //  optimizer: {
