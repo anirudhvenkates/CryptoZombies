@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.7.6;
+pragma solidity ^0.8.27;
 
 import "./zombieattack.sol";
 import "./erc721.sol";
-import "./safemath.sol";
+//import "./safemath.sol";
 
 contract ZombieOwnership is ZombieAttack, ERC721 {
 
-  using SafeMath for uint256;
+  //using SafeMath for uint256;
 
   mapping (uint => address) zombieApprovals;
 
@@ -20,8 +20,10 @@ contract ZombieOwnership is ZombieAttack, ERC721 {
   }
 
   function _transfer(address _from, address _to, uint256 _tokenId) private {
-    ownerZombieCount[_to] = ownerZombieCount[_to].add(1);
-    ownerZombieCount[msg.sender] = ownerZombieCount[msg.sender].sub(1);
+    //ownerZombieCount[_to] = ownerZombieCount[_to].add(1);
+	ownerZombieCount[_to] += 1;
+    //ownerZombieCount[msg.sender] = ownerZombieCount[msg.sender].sub(1);
+	ownerZombieCount[msg.sender] -= 1;
     zombieToOwner[_tokenId] = _to;
     emit Transfer(_from, _to, _tokenId);
   }

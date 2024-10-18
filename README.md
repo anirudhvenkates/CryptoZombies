@@ -4,7 +4,7 @@ Repository for creating Mid Term Project
 
 ## Improvements
 
-Uplifted code from 0.4.25 to 0.7.6
+Uplifted code from 0.4.25 to 0.8.27
 Deployed project on Sepolia Network
 
 ## Pre-requisites
