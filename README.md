@@ -6,10 +6,11 @@ Repository for creating Mid Term Project
 
 Uplifted code from 0.4.25 to 0.8.27
 Deployed project on Sepolia Network
-Added a config.json file with all parameters
+Added a write_config.py script that takes user input for parameters
 mnemonic.txt is still a separate file
 
 ## Pre-requisites
+Python3
 @truffle/hdwallet-provider
 Git
 Sepolia Faucet. Your account must be listening for requests on the Sepolia Network.
