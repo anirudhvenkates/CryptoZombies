@@ -4,6 +4,25 @@ Repository for creating Mid Term Project
 
 ## Improvements
 
+Uplifted code from 0.4.25 to 0.7.6
+Deployed project on Sepolia Network
+
+## Pre-requisites
+@truffle/hdwallet-provider
+Git
+Sepolia Faucet. Your account must be listening for requests on the Sepolia Network.
+Project in Infura
+Account in a Wallet on Sepolia Network
+
+## Files Required
+Create a mnemonic.txt file with your wallet private keys
+Project ID in Infura
+Address of Account from where to charge Ether
+
+## File Details
+truffle-config.js: Account address, HTTPS Link for Project ID
+mnemonic.txt: Twelve word key phrase 
+
 ## Team Members
 
 **Anirudh Venkatesh**
