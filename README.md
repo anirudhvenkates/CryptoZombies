@@ -6,6 +6,8 @@ Repository for creating Mid Term Project
 
 Uplifted code from 0.4.25 to 0.8.27
 Deployed project on Sepolia Network
+Added a config.json file with all parameters
+mnemonic.txt is still a separate file
 
 ## Pre-requisites
 @truffle/hdwallet-provider
