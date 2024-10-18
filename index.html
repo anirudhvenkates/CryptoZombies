@@ -4,24 +4,87 @@
 <head>
   <meta charset="UTF-8">
   <title>CryptoZombies front-end</title>
-<link rel="icon" href="favicon.ico">
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script language="javascript" type="text/javascript"
     src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
   <script language="javascript" type="text/javascript" src="cryptozombies_abi.js"></script>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      font-family: 'Arial', sans-serif;
+    }
+    .container {
+      margin-top: 50px;
+      max-width: 800px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    #txStatus {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #e9ecef;
+      text-align: center;
+      font-weight: bold;
+    }
+    .btn {
+      margin: 10px;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 16px;
+      width: 100%;
+      color: #fff;
+    }
+    .btn-primary {
+      background-color: #007bff;
+    }
+    .btn-success {
+      background-color: #28a745;
+    }
+    .btn-warning {
+      background-color: #ffc107;
+    }
+    #zombies {
+      margin-top: 30px;
+    }
+    .zombie-card {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .zombie-card h4 {
+      margin-bottom: 10px;
+    }
+  </style>
+  
 </head>
-
 <body>
-  <div id="txStatus"></div>
-  <div id="zombies"></div>
-  <h1 id="banner">Welcome to CryptoZombies!</h1>
-  <h3 id="accountHeader"></h3>
-  <button class="showZombieButton">Show Zombies</button>
-  <button class="levelupButton">Level Up</button>
+  <div class="container">
+    <h1 class="text-center" id="banner">Welcome to CryptoZombies!</h1>
+    <h6 class="text-center" id="accountHeader"></h3>
+    <div id="txStatus" class="alert alert-info text-center">
+      Transaction status will appear here...
+    </div>
 
-  <!-- Initially hidden elements -->
-  <button class="createzombieButton" id="createZombieButton" style="display: none;">Create Zombie</button>
-  <input type="text" id="zombieNameInput" placeholder="Enter zombie name" style="display: none;">
+    <div class="text-center">
+      <button class="btn btn-primary showZombieButton">Show Zombies</button>
+      <button class="btn btn-warning levelupButton">Level Up</button>
+
+      <!-- Initially hidden elements -->
+      <button class="btn btn-success createzombieButton" id="createZombieButton" style="display: none;">Create Zombie</button>
+      <input type="text" id="zombieNameInput" class="form-control mt-3 zombie-input" placeholder="Enter zombie name" style="display: none;">    
+    </div>
+
+    <div id="zombies" class="row mt-4">
+      <!-- Zombie cards will be added here dynamically -->
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
