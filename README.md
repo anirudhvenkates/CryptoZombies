@@ -21,7 +21,13 @@ Address of Account from where to charge Ether
 
 ## File Details
 truffle-config.js: Account address, HTTPS Link for Project ID
-mnemonic.txt: Twelve word key phrase 
+mnemonic.txt: Twelve word key phrase
+
+## Compilation and Migration Instructions
+truffle compile
+
+truffle migrate (for Ganache)
+truffle migrate --network sepolia (For Sepolia)
 
 ## Team Members
 
