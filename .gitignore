@@ -14,6 +14,9 @@ lock/
 LOG/
 index.lock
 
+#Ignore mnemonic file
+mnemonic.txt
+
 # Ignore the environment-specific .env files (e.g., for private keys)
 .env
 
