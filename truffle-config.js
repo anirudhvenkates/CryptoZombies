@@ -75,7 +75,7 @@ module.exports = {
   
   // Configuration for the Sepolia test network
   sepolia: {
-	provider: () => new HDWalletProvider(mnemonic, `https://sepolia.infura.io/v3/ad90e0f9dbec4a92a6ba74831d62525e`),
+	provider: () => new HDWalletProvider(mnemonic, `https://sepolia.infura.io/v3/ad90e0f9dbec4a92a6ba74831d62525e`,{ timeout: 40000 }),
     network_id: 11155111,  // Sepolia's network id
     gas: 5000000,          // Adjust based on your contract's needs
     gasPrice: 1000000000,  // Set to around 1 gwei (in wei) for Sepolia
