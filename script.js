@@ -59,7 +59,7 @@ async function createRandomZombie(name) {
       getZombiesByOwner(userAccount).then(displayZombies);
     })
     .on("error", function (error) {
-      $("#txStatus").text(error);
+      $("#txStatus").text("Transaction cancelled");
     });
 }
 
@@ -85,7 +85,7 @@ function levelUp(zombieId) {
       showZombieButton.click();
     })
     .on("error", function (error) {
-      $("#txStatus").text(error);
+      $("#txStatus").text("Transaction cancelled");
     });
 }
 
@@ -102,27 +102,20 @@ function getZombiesByOwner(owner) {
 }
 
 window.addEventListener('load', async () => {
-// Modern dapp browsers...
 if (window.ethereum) {
     window.web3 = new Web3(ethereum);
     try {
-        // Request account access if needed
         const accounts = await ethereum.enable();
-        // Acccounts now exposed
         userAccount = accounts[0];
         startApp()
     } catch (error) {
-        // User denied account access...
     }
 }
-// Legacy dapp browsers...
 else if (window.web3) {
     window.web3 = new Web3(web3.currentProvider);
-    // Acccounts always exposed
     userAccount = web3.eth.accounts[0];
     startApp()
 }
-// Non-dapp browsers...
 else {
     console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
 }
@@ -154,12 +147,28 @@ createzombieButton.addEventListener('click', () => {
   createRandomZombie(zombieName);
 });
 
-showZombieButton.addEventListener('click', () => {
+showZombieButton.addEventListener('click', async () => {
+
+    // if there are no zombies
+    const ids = await getZombiesByOwner(userAccount);
+    if (ids.length <= 0) {
+      $("#txStatus").text("You don't have any zombies yet!");
+      return;
+    }
+  
   getZombiesByOwner(userAccount)
         .then(displayZombies);
 });
 
-levelupButton.addEventListener('click', () => {
+levelupButton.addEventListener('click', async () => {
+
+  // if there are no zombies
+  const ids = await getZombiesByOwner(userAccount);
+  if (ids.length <= 0) {
+    $("#txStatus").text("You don't have any zombies yet!");
+    return;
+  }
+
   getZombiesByOwner(userAccount)
         .then(levelUp);
 });
