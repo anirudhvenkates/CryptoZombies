@@ -20,9 +20,9 @@ Repository for creating Mid Term Project
 
 **Snigdha Aravapalli**
 
-- Email: snigdha.aravapalli@csu.fullerton.edu
+- Email:
 
-- CWID:847086824
+- CWID:
 
 **Suchita Penubothu**
 
