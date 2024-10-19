@@ -68,21 +68,6 @@
           });
       }
     }
-	
-    function populateZombieSelect() {
-      getZombiesByOwner(userAccount).then(ids => {
-        const zombieSelect = document.getElementById("zombieIdSelect");
-        zombieSelect.innerHTML = ""; // Clear previous options
-
-        ids.forEach(id => {
-          const option = document.createElement("option");
-          option.value = id;
-          option.textContent = `Zombie ID: ${id}`;
-          zombieSelect.appendChild(option);
-        });
-      });
-	  populateZombieSelect()
-    }
 
     function createRandomZombie(name) {
       $("#txStatus").text("Creating new zombie on the blockchain. This may take a while...");
@@ -92,7 +77,6 @@
         .on("receipt", function (receipt) {
           $("#txStatus").text("Successfully created " + name + "!");
           getZombiesByOwner(userAccount).then(displayZombies);
-          populateZombieSelect();
         })
         .on("error", function (error) {
           $("#txStatus").text(error);
