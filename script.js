@@ -23,19 +23,23 @@ function startApp() {
 
 function displayZombies(ids) {
   $("#zombies").empty();
-  for (id of ids) {
+  
+  for (const id of ids) {
     getZombieDetails(id)
       .then(function (zombie) {
-        $("#zombies").append(`<div class="zombie">
-          <ul>
-            <li>Name: ${zombie.name}</li>
-            <li>DNA: ${zombie.dna}</li>
-            <li>Level: ${zombie.level}</li>
-            <li>Wins: ${zombie.winCount}</li>
-            <li>Losses: ${zombie.lossCount}</li>
-            <li>Ready Time: ${zombie.readyTime}</li>
-          </ul>
-        </div>`);
+        const readyTime = new Date(zombie.readyTime * 1000).toLocaleString();
+        $("#zombies").append(`
+          <div class="zombie-card">
+            <h3><strong>Name: </strong>${zombie.name}</h3>
+            <ul>
+              <li><strong>DNA:</strong> ${zombie.dna}</li>
+              <li><strong>Level:</strong> ${zombie.level}</li>
+              <li><strong>Wins:</strong> ${zombie.winCount}</li>
+              <li><strong>Losses:</strong> ${zombie.lossCount}</li>
+              <li><strong>Ready Time:</strong> ${readyTime}</li>
+            </ul>
+          </div>
+        `);
       });
   }
 }
