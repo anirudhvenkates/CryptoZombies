@@ -7,7 +7,7 @@ const levelupButton = document.querySelector('.levelupButton');
 function startApp() {
 
   // ZombieOwnership contract address. Must be updated to match Ganache
-  var cryptoZombiesAddress = "0x1AAB936D33b7C29E1E90F25CAFA8bDE18c110271";
+  var cryptoZombiesAddress = "0x621f39Dc2FA4E9F1ad12123a03ba658131bA54a2";
 
   cryptoZombies = new web3.eth.Contract(cryptoZombiesABI, cryptoZombiesAddress);
 
@@ -23,19 +23,23 @@ function startApp() {
 
 function displayZombies(ids) {
   $("#zombies").empty();
-  for (id of ids) {
+  
+  for (const id of ids) {
     getZombieDetails(id)
       .then(function (zombie) {
-        $("#zombies").append(`<div class="zombie">
-          <ul>
-            <li>Name: ${zombie.name}</li>
-            <li>DNA: ${zombie.dna}</li>
-            <li>Level: ${zombie.level}</li>
-            <li>Wins: ${zombie.winCount}</li>
-            <li>Losses: ${zombie.lossCount}</li>
-            <li>Ready Time: ${zombie.readyTime}</li>
-          </ul>
-        </div>`);
+        const readyTime = new Date(zombie.readyTime * 1000).toLocaleString();
+        $("#zombies").append(`
+          <div class="zombie-card">
+            <h3><strong>Name: </strong>${zombie.name}</h3>
+            <ul>
+              <li><strong>DNA:</strong> ${zombie.dna}</li>
+              <li><strong>Level:</strong> ${zombie.level}</li>
+              <li><strong>Wins:</strong> ${zombie.winCount}</li>
+              <li><strong>Losses:</strong> ${zombie.lossCount}</li>
+              <li><strong>Ready Time:</strong> ${readyTime}</li>
+            </ul>
+          </div>
+        `);
       });
   }
 }
@@ -81,8 +85,11 @@ function levelUp(zombieId) {
   return cryptoZombies.methods.levelUp(zombieId)
     .send({ from: userAccount, value: web3.utils.toWei("0.001", "ether") })
     .on("receipt", function (receipt) {
-      $("#txStatus").text("Power overwhelming! Zombie successfully leveled up");
-      showZombieButton.click();
+      $("#txStatus").text("Power overwhelming! Zombie successfully leveled up!");
+
+      if (showZombieButton.textContent = "Show Zombies"){
+        showZombieButton.click();
+      }
     })
     .on("error", function (error) {
       $("#txStatus").text("Transaction cancelled");
@@ -148,16 +155,27 @@ createzombieButton.addEventListener('click', () => {
 });
 
 showZombieButton.addEventListener('click', async () => {
+  const currentText = showZombieButton.textContent;
 
-    // if there are no zombies
+  if (currentText === "Show Zombies") {
+
+    // if the user has no zombies
     const ids = await getZombiesByOwner(userAccount);
     if (ids.length <= 0) {
       $("#txStatus").text("You don't have any zombies yet!");
       return;
     }
-  
-  getZombiesByOwner(userAccount)
-        .then(displayZombies);
+
+    // display the zombies
+    getZombiesByOwner(userAccount)
+      .then(displayZombies);
+
+    showZombieButton.textContent = "Hide Zombies";
+
+  } else if (currentText === "Hide Zombies") {
+    $("#zombies").empty();
+    showZombieButton.textContent = "Show Zombies";
+  }
 });
 
 levelupButton.addEventListener('click', async () => {
