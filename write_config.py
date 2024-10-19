@@ -8,7 +8,7 @@ config_data = {
         "network_id": input("Enter Network ID (default: 5777): ") or "5777"
     },
     "sepolia": {
-        "provider": input("Enter Provider URL: (default: https://sepolia.infura.io/v3/ad90e0f9dbec4a92a6ba74831d62525e): ") or "https://sepolia.infura.io/v3/ad90e0f9dbec4a92a6ba74831d62525e",
+        "provider": "https://sepolia.infura.io/v3/"+(input("Enter Project ID: (default: ad90e0f9dbec4a92a6ba74831d62525e): ") or "ad90e0f9dbec4a92a6ba74831d62525e"),
         "timeout": int(input("Enter Timeout (default: 40000): ") or 40000),
         "network_id": int(input("Enter Network ID (default: 11155111): ") or 11155111),
         "gas": int(input("Enter Gas (default: 5000000): ") or 5000000),
