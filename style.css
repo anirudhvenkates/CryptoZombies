@@ -1,5 +1,5 @@
 body {
-    background-color: #f0f0f0;
+    background-color: #add8e6;
     font-family: 'Arial', sans-serif;
   }
   .container {
@@ -64,6 +64,7 @@ body {
   }
   .zombie-card:hover {
     transform: scale(1.05);
+    background-color: #d4edda;
   }
   .zombie-card ul {
     list-style: none;
