@@ -26,6 +26,6 @@ Repository for creating Mid Term Project
 
 **Suchita Penubothu**
 
-- Email:
+- Email: suchitapenubothu01@csu.fullerton.edu
 
-- CWID:
+- CWID: 885165019
