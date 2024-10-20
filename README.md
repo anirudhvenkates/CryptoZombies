@@ -54,6 +54,6 @@ truffle migrate --network sepolia (For Sepolia)
 
 **Suchita Penubothu**
 
-- Email:
+- Email: suchitapenubopthu01@csu.fullerton.edu
 
-- CWID:
+- CWID: 885165019
