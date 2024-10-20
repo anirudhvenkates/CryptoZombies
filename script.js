@@ -3,19 +3,32 @@ var userAccount;
 const showZombieButton = document.querySelector('.showZombieButton');
 const createzombieButton = document.querySelector('.createzombieButton');
 const levelupButton = document.querySelector('.levelupButton');
+const feedonkittyButton = document.querySelector('.feedonkittyButton');
 
 function startApp() {
 
   // ZombieOwnership contract address. Must be updated to match Ganache
   var cryptoZombiesAddress = "0x621f39Dc2FA4E9F1ad12123a03ba658131bA54a2";
-
   cryptoZombies = new web3.eth.Contract(cryptoZombiesABI, cryptoZombiesAddress);
+
+  // kittyContractAddress contract address. Must be updated to match Ganache
+  const kittyContractAddress = "0x1168b5B07279d7641bB7d25B36792065AE6B0fD2";
+	const kittyContract = new web3.eth.Contract(kittyABI, kittyContractAddress);
 
   cryptoZombies.events.Transfer({ filter: { _to: userAccount } })
     .on("data", function (event) {
       let data = event.returnValues;
       getZombiesByOwner(userAccount).then(displayZombies);
     }).on("error", console.error);
+
+  cryptoZombies.methods.setKittyContractAddress(kittyContractAddress)
+      .send({ from: userAccount })
+      .on("receipt", function (receipt) {
+          $("#txStatus").text("Kitty contract address set successfully!");
+      })
+      .on("error", function (error) {
+          $("#txStatus").text("Error setting kitty contract address: " + error.message);
+      });
 
     const accountHeader = document.getElementById('accountHeader');
     accountHeader.textContent = `Account: ${userAccount}`;
@@ -190,3 +203,8 @@ levelupButton.addEventListener('click', async () => {
   getZombiesByOwner(userAccount)
         .then(levelUp);
 });
+
+feedonkittyButton.addEventListener('click', () => {
+	getZombiesByOwner(userAccount)
+            .then(feedOnKitty);
+    });
